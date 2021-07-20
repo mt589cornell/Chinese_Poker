@@ -3,7 +3,7 @@ from _thread import *
 import pickle
 from Game import Game
 
-server = ""
+server = "25.9.252.98"
 port = 25565
 PACKET_SIZE = 2048*4
 
@@ -42,8 +42,8 @@ def threaded_client(conn, p, gameId):
                         game.reset() # start a new game
                     elif data != "get":
                         game.play(p, data) # update game with current player's moves
-                    # print('Received: ', reply)
-                    # print('Sending: ', reply)
+                    print('Received: ', data)
+                    print('Sending: ', data)
                     reply = game
                     conn.sendall(pickle.dumps(reply))
             else:

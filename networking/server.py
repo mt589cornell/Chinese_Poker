@@ -4,7 +4,7 @@ import pickle
 from Game import Game
 
 server = "192.168.1.219"
-port = 5555
+port = 25565
 PACKET_SIZE = 2048*4
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

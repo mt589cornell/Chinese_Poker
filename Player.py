@@ -41,5 +41,6 @@ class Player:
         selection.reverse()
         for select in selection:
             choice.append(self.curr.pop(select))
+        choice.reverse()
 
         return Hand(choice)

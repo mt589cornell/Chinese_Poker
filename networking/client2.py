@@ -38,7 +38,9 @@ def main():
             n.send(option)
         else:
             print("Opponent's turn...")
-            print("Opponent has {} cards left".format(game.players[player].num_cards()))
+            player2 = (player+1)%2
+            print("Opponent has {} cards left".format(game.players[player2].num_cards()))
+            print("You have {} cards left".format(game.players[player].num_cards()))
             print("Your cards:")
             print(game.players[player].__display__())
             wait = True

@@ -18,6 +18,7 @@ class Game:
         self.ready = False
         self.players = [self.p1, self.p2]
         self.field = "pass"
+        self.winner = None
 
     def connected(self):
         return self.ready
@@ -27,7 +28,30 @@ class Game:
         self.p1 = Player(self.p1.name)
         self.p2 = Player(self.p2.name)
         self.ready = True
+        self.winner = None
         self.initialize_game()
+
+    def deal_cards(self, num_cards):
+        for i in range(num_cards):
+            self.p1.draw(self.deck)
+            self.p2.draw(self.deck)
+
+    def initialize_game(self):
+        print("Dealing {} cards each".format(NUM_CARDS))
+        self.deal_cards(NUM_CARDS)
+
+        p1_lowest_card = self.p1.get_lowest_card()
+        p2_lowest_card = self.p2.get_lowest_card()
+
+        if p1_lowest_card.value <= p2_lowest_card.value:
+            first = self.p1.name
+            self.p1.turn = True
+        else:
+            first = self.p2.name
+            self.p2.turn = True
+
+        # player one starts game
+        print("Player {} goes first".format(first))
 
     def wins(self, winner):
         w = "{} wins this round"
@@ -36,22 +60,18 @@ class Game:
 
     def check_winner(self, player: 'Player'):
         if player.num_cards() == 0:
-            self.active = False
+            self.ready = False
             self.wins(player.name)
-
-    def deal_cards(self, num_cards):
-        for i in range(num_cards):
-            self.p1.draw(self.deck)
-            self.p2.draw(self.deck)
+            self.winner = player
 
     def pass_or_play(self, player: 'Player', move) -> Hand:
 
-        if move == "pass":
+        if move == "Pass":
             # draw a card
             try:
                 player.draw(self.deck)
                 print('Player {} has passed'.format(player.name))
-                self.field = "pass"
+                self.field = "Pass"
                 return Hand([])
             except ValueError as err:
                 print("No more cards in deck!, Player {} has passed".format(player.name))
@@ -62,7 +82,20 @@ class Game:
             selection = list(map(int, selection))
             field = player.play_cards(selection)
             self.field = field
+
+            self.check_winner(player)
+
             return field
+
+
+
+    def play(self, player, data):
+        print("Player {} made a move".format(player))
+        self.pass_or_play(self.players[player], data)
+        self.players[player].turn = False
+        opponent = (player + 1)%2
+        self.players[opponent].turn = True
+
 
     def play_game(self):
         print("Dealing {} cards each".format(NUM_CARDS))
@@ -90,29 +123,3 @@ class Game:
             self.check_winner(self.p2)
 
         print("Game has ended!")
-
-    def initialize_game(self):
-        print("Dealing {} cards each".format(NUM_CARDS))
-        self.deal_cards(NUM_CARDS)
-
-        p1_lowest_card = self.p1.get_lowest_card()
-        p2_lowest_card = self.p2.get_lowest_card()
-
-        if p1_lowest_card.value <= p2_lowest_card.value:
-            first = self.p1.name
-            self.p1.turn = True
-        else:
-            first = self.p2.name
-            self.p2.turn = True
-
-        # player one starts game
-        print("Player {} goes first".format(first))
-
-    def play(self, player, data):
-        print("Player {} made a move".format(player))
-        self.pass_or_play(self.players[player], data)
-        self.players[player].turn = False
-        opponent = (player + 1)%2
-        self.players[opponent].turn = True
-        pass
-
